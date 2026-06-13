@@ -90,8 +90,9 @@ Run the bundled demo:
 - [x] Geometry: Euclidean/plane, affine transforms, non-Euclidean (spherical + hyperbolic)
 - [x] Statistics: distributions, estimators (MLE/CI/bootstrap), hypothesis tests (`stats/` package — separate from stdlib `statistics`)
 - [x] Hamiltonian mechanics; quantum (time-independent Schrödinger); electromagnetism; statistical mechanics
+- [x] FastAPI backend (`backend/`): code execution, formula rendering/calculus, geometry scenes — see [backend/README.md](backend/README.md)
+- [x] Docker execution sandbox (`--network none`, resource limits) + dev local fallback
 - [ ] Deeper physics: rigid bodies, constraints (Lagrange multipliers), time-dependent Schrödinger, magnetostatics (Biot-Savart)
 - [ ] More maths: 2-D/3-D PDEs, optimization, number theory, abstract algebra
-- [ ] FastAPI backend + Docker execution sandbox
 - [ ] React IDE (Monaco) + terminal (xterm.js) + **LaTeX formula input** (KaTeX) + **geometry/plot canvas**
 ```

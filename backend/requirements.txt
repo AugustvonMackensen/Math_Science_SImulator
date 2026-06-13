@@ -1,0 +1,6 @@
+# Web backend dependencies (the compute engine is installed from the repo's
+# pyproject.toml: numpy, scipy, sympy, matplotlib).
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+httpx>=0.27          # used by Starlette's TestClient
