@@ -3,19 +3,35 @@
 A postgraduate-level compute engine for **physics** and **mathematics**, built to power a
 web app with an in-browser **Code IDE** and **terminal** output.
 
-> **Status:** Milestone 1 — the *compute engine* (pure Python library). The FastAPI
-> backend, Dockerized execution sandbox, and React IDE/terminal frontend come next.
+> **Status:** Full stack in place — compute engine (Python), FastAPI backend with a
+> Dockerized execution sandbox, and a React + TypeScript frontend (Monaco IDE,
+> KaTeX formulas, geometry canvas). Monorepo.
 
-## Architecture (target)
+## Architecture
 
 ```
-React + TypeScript  (Monaco IDE + xterm.js terminal)
-        │  HTTP / WebSocket
-FastAPI backend  ──► Docker sandbox (per-run, resource-limited)
+frontend/  React + TypeScript (Monaco IDE · KaTeX formulas · geometry SVG)
+        │  HTTP (Vite proxy /api, /health)
+backend/   FastAPI  ──► Docker sandbox (per-run, --network none, resource-limited)
+        │              └► dev-only local executor fallback
         │
-   compute engine  ◄── this repository
-   (core / maths / physics)
+   compute engine  (core / maths / physics / stats)  ◄── repo root
 ```
+
+## Running the web app
+
+```bash
+# 1) engine + backend deps (one time)
+.venv\Scripts\python -m pip install -e ".[dev]" -r backend/requirements.txt
+
+# 2) backend on :8000
+.venv\Scripts\python -m uvicorn backend.app.main:app --reload
+
+# 3) frontend on :5173 (new terminal)
+cd frontend && npm install && npm run dev
+```
+
+See [backend/README.md](backend/README.md) and [frontend/README.md](frontend/README.md) for details.
 
 ## Packages
 
@@ -92,7 +108,8 @@ Run the bundled demo:
 - [x] Hamiltonian mechanics; quantum (time-independent Schrödinger); electromagnetism; statistical mechanics
 - [x] FastAPI backend (`backend/`): code execution, formula rendering/calculus, geometry scenes — see [backend/README.md](backend/README.md)
 - [x] Docker execution sandbox (`--network none`, resource limits) + dev local fallback
+- [x] React + TS frontend (`frontend/`): Monaco IDE + terminal/figures, KaTeX formula panel, geometry SVG canvas — see [frontend/README.md](frontend/README.md)
 - [ ] Deeper physics: rigid bodies, constraints (Lagrange multipliers), time-dependent Schrödinger, magnetostatics (Biot-Savart)
 - [ ] More maths: 2-D/3-D PDEs, optimization, number theory, abstract algebra
-- [ ] React IDE (Monaco) + terminal (xterm.js) + **LaTeX formula input** (KaTeX) + **geometry/plot canvas**
+- [ ] Frontend polish: persistent sessions, multiple files, xterm.js interactive terminal, plot interactivity
 ```

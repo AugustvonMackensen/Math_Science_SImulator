@@ -1,0 +1,153 @@
+:root {
+  --bg: #0f1116;
+  --panel: #171a21;
+  --panel-2: #1e222b;
+  --border: #2a2f3a;
+  --text: #e6e8ec;
+  --dim: #8a909c;
+  --accent: #4c8bf5;
+  --err: #ff6b6b;
+  --ok: #45c486;
+  --warn: #e0a042;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.mono,
+code,
+.terminal,
+.text-input.mono {
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+}
+
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+.app-header h1 { font-size: 17px; margin: 0; font-weight: 600; }
+.health .ok { color: var(--ok); }
+.health .warn { color: var(--warn); }
+.health span { font-size: 13px; }
+
+.tabs { display: flex; gap: 4px; padding: 8px 16px; background: var(--panel); border-bottom: 1px solid var(--border); }
+.tab {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--dim);
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.tab:hover { color: var(--text); }
+.tab.active { background: var(--panel-2); color: var(--text); border-color: var(--border); }
+
+.content { flex: 1; padding: 16px 20px; }
+
+.panel-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 980px) { .panel-split { grid-template-columns: 1fr; } }
+
+.editor-col, .output-col {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.toolbar { display: flex; align-items: center; gap: 12px; margin: 10px 0; flex-wrap: wrap; }
+.meta { color: var(--dim); font-size: 13px; }
+
+button.primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+button.primary:disabled { opacity: 0.6; cursor: default; }
+
+.section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); margin: 10px 0 6px; }
+
+.terminal {
+  background: #0b0d12;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 200px;
+  max-height: 50vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+.terminal.small { min-height: auto; font-size: 12px; }
+.err { color: var(--err); }
+.dim { color: var(--dim); }
+.small { font-size: 12px; }
+
+.figures img, .svg-wrap svg { max-width: 100%; background: white; border-radius: 6px; margin-top: 8px; }
+.svg-wrap { background: white; border-radius: 6px; padding: 4px; display: inline-block; }
+
+.text-input {
+  width: 100%;
+  background: #0b0d12;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+.text-input.narrow { width: 70px; }
+.shapes { min-height: 260px; resize: vertical; }
+
+.calc-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0; }
+.calc-controls label { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--dim); }
+.calc-controls select { background: #0b0d12; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px; }
+
+.result-card { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin: 10px 0; }
+.result-card .row { display: flex; align-items: center; gap: 14px; margin: 8px 0; }
+.result-card .row .dim { min-width: 80px; }
+
+.check { display: flex; align-items: center; gap: 6px; color: var(--dim); font-size: 13px; }
+
+.math-input-wrap {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+math-field {
+  font-size: 20px;
+  --caret-color: #4c8bf5;
+  --selection-background-color: #cfe0ff;
+}
+
+.mode-switch { display: flex; gap: 8px; margin-bottom: 14px; }
+.chip {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--dim);
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.chip:hover { color: var(--text); }
+.chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }

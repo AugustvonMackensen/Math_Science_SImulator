@@ -48,6 +48,7 @@ class FormulaResponse(BaseModel):
 
 class CalculusRequest(BaseModel):
     expression: str
+    input_format: Literal["auto", "text", "latex"] = "auto"
     variable: str = "x"
     operation: Literal["derivative", "integral", "limit", "series"]
     order: int = 1
@@ -60,6 +61,23 @@ class CalculusResponse(BaseModel):
     operation: str
     result: str
     result_latex: str
+
+
+class FunctionPlotRequest(BaseModel):
+    expression: str = Field(..., description="y = f(variable), as SymPy text or LaTeX.")
+    input_format: Literal["auto", "text", "latex"] = "auto"
+    variable: str = "x"
+    x_min: float = -10.0
+    x_max: float = 10.0
+    samples: int = Field(400, ge=2, le=5000)
+
+
+class FunctionPlotResponse(BaseModel):
+    expression_latex: str
+    variable: str
+    x: list[float]
+    y: list[float | None]  # None marks undefined / non-finite samples
+    svg: str | None = None
 
 
 # --- geometry --------------------------------------------------------------

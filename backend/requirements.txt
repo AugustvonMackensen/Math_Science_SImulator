@@ -4,3 +4,4 @@ fastapi>=0.110
 uvicorn[standard]>=0.29
 pydantic>=2.6
 httpx>=0.27          # used by Starlette's TestClient
+antlr4-python3-runtime==4.11  # enables SymPy LaTeX parsing (MathLive input)

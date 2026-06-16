@@ -22,6 +22,12 @@ Open http://127.0.0.1:8000/docs for the interactive API.
 | POST   | `/api/formula/evaluate`  | Parse → LaTeX + simplified form + optional value      |
 | POST   | `/api/formula/calculus`  | derivative / integral / limit / series               |
 | POST   | `/api/geometry/scene`    | Shape specs → drawable primitives + metrics + SVG     |
+| POST   | `/api/geometry/plot`     | `y = f(x)` expression → sampled points + SVG curve     |
+
+Formula/calculus/plot endpoints accept `input_format: "text" | "latex" | "auto"`,
+so the frontend's MathLive editor can send LaTeX directly. A bare `e` is treated
+as Euler's number. LaTeX parsing needs `antlr4-python3-runtime==4.11` (in
+`requirements.txt`).
 
 ## Code execution & security
 

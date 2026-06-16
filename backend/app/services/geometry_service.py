@@ -11,11 +11,20 @@ from __future__ import annotations
 import io
 
 import numpy as np
+import sympy as sp
 
 from core.exceptions import ModelError
 from maths.geometry import euclidean as eu
 
-from ..schemas import Drawable, GeometryRequest, GeometryResponse, ShapeSpec
+from ..schemas import (
+    Drawable,
+    FunctionPlotRequest,
+    FunctionPlotResponse,
+    GeometryRequest,
+    GeometryResponse,
+    ShapeSpec,
+)
+from .formula_service import parse_expression
 
 
 def _require_points(spec: ShapeSpec, n: int) -> list[list[float]]:
@@ -161,3 +170,53 @@ def build_scene(req: GeometryRequest) -> GeometryResponse:
     bounds = _bounds(coords)
     svg = _render_svg(drawables, bounds) if req.render_svg else None
     return GeometryResponse(drawables=drawables, bounds=bounds, metrics=metrics, svg=svg)
+
+
+def plot_function(req: FunctionPlotRequest) -> FunctionPlotResponse:
+    """Sample ``y = f(variable)`` over a range and render it as an SVG curve."""
+    if req.x_max <= req.x_min:
+        raise ModelError("x_max must be greater than x_min")
+    expr = parse_expression(req.expression, req.input_format)
+    var = sp.Symbol(req.variable, real=True)
+    # Compare by name: parsers may yield symbols without the real assumption.
+    extra = sorted({s.name for s in expr.free_symbols} - {req.variable})
+    if extra:
+        raise ModelError(
+            f"expression has unbound symbols {extra}; "
+            f"only the plot variable {req.variable!r} is allowed"
+        )
+
+    f = sp.lambdify(var, expr, modules="numpy")
+    xs = np.linspace(req.x_min, req.x_max, req.samples)
+    with np.errstate(all="ignore"):
+        ys = np.asarray(f(xs), dtype=float) * np.ones_like(xs)  # broadcast constants
+    finite = np.isfinite(ys)
+    ys = np.where(finite, ys, np.nan)
+
+    svg = _render_curve_svg(xs, ys, req.variable)
+    y_out: list[float | None] = [float(v) if m else None for v, m in zip(ys, finite)]
+    return FunctionPlotResponse(
+        expression_latex=sp.latex(expr),
+        variable=req.variable,
+        x=[float(v) for v in xs],
+        y=y_out,
+        svg=svg,
+    )
+
+
+def _render_curve_svg(xs: np.ndarray, ys: np.ndarray, var: str) -> str:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.plot(xs, ys, color="#4c8bf5", linewidth=1.8)
+    ax.axhline(0, color="#888", linewidth=0.8)
+    ax.axvline(0, color="#888", linewidth=0.8)
+    ax.set_xlabel(var)
+    ax.set_ylabel(f"f({var})")
+    ax.grid(True, alpha=0.3)
+    buf = io.StringIO()
+    fig.savefig(buf, format="svg", bbox_inches="tight")
+    plt.close(fig)
+    return buf.getvalue()

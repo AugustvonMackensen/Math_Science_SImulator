@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/api.ts","./src/main.tsx","./src/mathlive.d.ts","./src/vite-env.d.ts","./src/components/coderunner.tsx","./src/components/formulapanel.tsx","./src/components/geometrypanel.tsx","./src/components/mathinput.tsx","./src/components/tex.tsx"],"version":"5.9.3"}

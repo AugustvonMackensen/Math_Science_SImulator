@@ -32,22 +32,30 @@ def _parse_latex(text: str) -> sp.Expr:
     return parse_latex(text)
 
 
+def _with_constants(expr: sp.Expr) -> sp.Expr:
+    """Interpret a bare ``e`` as Euler's number, as a math tool is expected to."""
+    e_sym = sp.Symbol("e")
+    if e_sym in expr.free_symbols:
+        expr = expr.subs(e_sym, sp.E)
+    return expr
+
+
 def parse_expression(text: str, input_format: str) -> sp.Expr:
     """Parse ``text`` into a SymPy expression per the requested format."""
     text = text.strip()
     if not text:
         raise ModelError("expression is empty")
     if input_format == "latex":
-        return _parse_latex(text)
+        return _with_constants(_parse_latex(text))
     if input_format == "text":
-        return calculus.parse(text, _names(text))
+        return _with_constants(calculus.parse(text, _names(text)))
     # auto: a backslash strongly implies LaTeX; fall back to text on failure.
     if "\\" in text:
         try:
-            return _parse_latex(text)
+            return _with_constants(_parse_latex(text))
         except ModelError:
             pass
-    return calculus.parse(text, _names(text))
+    return _with_constants(calculus.parse(text, _names(text)))
 
 
 def _names(text: str) -> list[str]:
@@ -76,7 +84,9 @@ def evaluate_formula(req: FormulaRequest) -> FormulaResponse:
 
 
 def run_calculus(req: CalculusRequest) -> CalculusResponse:
-    expr = req.expression
+    # Normalize the (possibly LaTeX) input into SymPy text so the calculus
+    # helpers can re-parse it consistently.
+    expr = str(parse_expression(req.expression, req.input_format))
     op = req.operation
     if op == "derivative":
         result = calculus.derivative(expr, req.variable, req.order)
